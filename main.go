@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
@@ -9,9 +10,14 @@ import (
 
 func main() {
 
+	// Connect to database & create DB connection pool.
+	db, err := sql.Open("sqlite3", "./quisqueya.db")
+	checkErr(err)
+	defer db.Close()
+
 	menu := wmenu.NewMenu("What would you like to do?")
 
-	menu.Action(func(opts []wmenu.Opt) error { handleFunc(opts); return nil })
+	menu.Action(func(opts []wmenu.Opt) error { handleFunc(db, opts); return nil })
 
 	menu.Option("Add a new Province", 0, false, nil)
 	menu.Option("Find a Province", 1, true, nil)
@@ -24,7 +30,7 @@ func main() {
 	}
 }
 
-func handleFunc(opts []wmenu.Opt) {
+func handleFunc(db *sql.DB, opts []wmenu.Opt) {
 
 	switch opts[0].Value {
 
@@ -38,5 +44,11 @@ func handleFunc(opts []wmenu.Opt) {
 		fmt.Println("Deleting a Province by ID")
 	case 4:
 		fmt.Println("Quitting application")
+	}
+}
+
+func checkErr(err error) {
+	if err != nil {
+		log.Fatal(err)
 	}
 }

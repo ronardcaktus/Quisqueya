@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"strings"
 
 	"github.com/dixonwille/wmenu"
 )
@@ -35,7 +38,62 @@ func handleFunc(db *sql.DB, opts []wmenu.Opt) {
 	switch opts[0].Value {
 
 	case 0:
-		fmt.Println("Adding a new Province")
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Enter the province name: ")
+		province_name, _ := reader.ReadString('\n')
+		if province_name != "\n" {
+			province_name = strings.TrimSuffix(province_name, "\n")
+		}
+		fmt.Print("Enter the name of the capital city: ")
+		capital, _ := reader.ReadString('\n')
+		if capital != "\n" {
+			capital = strings.TrimSuffix(capital, "\n")
+		}
+		fmt.Print("Enter the region's name: ")
+		region, _ := reader.ReadString('\n')
+		if region != "\n" {
+			region = strings.TrimSuffix(region, "\n")
+		}
+		fmt.Print("Enter the department's name: ")
+		department, _ := reader.ReadString('\n')
+		if department != "\n" {
+			department = strings.TrimSuffix(department, "\n")
+		}
+		fmt.Print("Enter the region's name: ")
+		area_km2, _ := reader.ReadString('\n')
+		if area_km2 != "\n" {
+			area_km2 = strings.TrimSuffix(area_km2, "\n")
+		}
+		fmt.Print("Enter province's population: ")
+		population_2021, _ := reader.ReadString('\n')
+		if population_2021 != "\n" {
+			population_2021 = strings.TrimSuffix(population_2021, "\n")
+		}
+		fmt.Print("Enter the province's density: ")
+		density, _ := reader.ReadString('\n')
+		if density != "\n" {
+			density = strings.TrimSuffix(density, "\n")
+		}
+		fmt.Print("Enter the year in which this province was established: ")
+		established_year, _ := reader.ReadString('\n')
+		if established_year != "\n" {
+			established_year = strings.TrimSuffix(established_year, "\n")
+		}
+
+		newProvince := province{
+			province:         province_name,
+			capital:          capital,
+			region:           region,
+			department:       department,
+			area_km2:         area_km2,
+			population_2021:  population_2021,
+			density:          density,
+			established_year: established_year,
+		}
+
+		addProvince(db, newProvince)
+
+		break
 	case 1:
 		fmt.Println("Finding a Province")
 	case 2:

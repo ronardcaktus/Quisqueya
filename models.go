@@ -120,3 +120,18 @@ func addNewField(reader *bufio.Reader, prompt string) string {
 	}
 	return input
 }
+
+func deleteProvince(db *sql.DB, idToDelete string) int64 {
+
+	stmt, err := db.Prepare("DELETE FROM provinces where id = ?")
+	checkErr(err)
+	defer stmt.Close()
+
+	res, err := stmt.Exec(idToDelete)
+	checkErr(err)
+
+	affected, err := res.RowsAffected()
+	checkErr(err)
+
+	return affected
+}

@@ -26,8 +26,9 @@ func main() {
 	menu.Option("Find a Province", 1, true, nil)
 	menu.Option("Update a Province's information", 2, false, nil)
 	menu.Option("Delete a Province", 3, false, nil)
-	menuerr := menu.Run()
+	menu.Option("Quit application", 4, false, nil)
 
+	menuerr := menu.Run()
 	if menuerr != nil {
 		log.Fatal(menuerr)
 	}
@@ -104,8 +105,21 @@ func handleFunc(db *sql.DB, opts []wmenu.Opt) {
 
 		break
 	case 3:
-		fmt.Println("Deleting a Province by ID")
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Enter the ID of the province you want to delete: ")
+		searchString, _ := reader.ReadString('\n')
+
+		idToDelete := strings.TrimSuffix(searchString, "\n")
+
+		affected := deleteProvince(db, idToDelete)
+
+		if affected == 1 {
+			fmt.Printf("Deleted Province with ID %s from database", idToDelete)
+		}
+
+		break
 	case 4:
-		fmt.Println("Quitting application")
+		fmt.Println("Goodbye!")
+		os.Exit(0)
 	}
 }

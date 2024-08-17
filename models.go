@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -56,4 +59,64 @@ func searchProvince(db *sql.DB, searchString string) []province {
 	}
 
 	return provinces
+}
+
+func getProvinceById(db *sql.DB, targetID string) (province, error) {
+	stmt, err := db.Prepare("SELECT id, province, capital, region, department, area_km2, population_2021, density, established_year FROM provinces WHERE id = ?")
+	if err != nil {
+		return province{}, err
+	}
+	defer stmt.Close()
+	targetProvince := province{}
+
+	err = stmt.QueryRow(targetID).Scan(&targetProvince.id, &targetProvince.province, &targetProvince.capital, &targetProvince.region, &targetProvince.department, &targetProvince.area_km2, &targetProvince.population_2021, &targetProvince.density, &targetProvince.established_year)
+	if err != nil {
+		return province{}, err
+	}
+
+	return targetProvince, nil
+}
+
+func updateProvince(db *sql.DB, targetProvince province) int64 {
+
+	stmt, err := db.Prepare("UPDATE provinces set province = ?, capital = ?, region = ?, department = ?, area_km2 = ?, population_2021 = ?, density = ?, established_year = ? where id = ?")
+	checkErr(err)
+	defer stmt.Close()
+
+	res, err := stmt.Exec(targetProvince.province, targetProvince.capital, targetProvince.region, targetProvince.department, targetProvince.area_km2, targetProvince.population_2021, targetProvince.density, targetProvince.established_year, targetProvince.id)
+	checkErr(err)
+
+	affected, err := res.RowsAffected()
+	checkErr(err)
+
+	return affected
+}
+
+func checkErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+// updateExistingField prompts the user for a field name while displaying
+// the current one. It also cleans up inputed data: trim white space and
+// ensures it isn't empty.
+func updateExistingField(fieldName string, currentValue string, field *string) {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Printf("%s (Currently %s): ", fieldName, currentValue)
+	input, _ := reader.ReadString('\n')
+	if input != "\n" {
+		*field = strings.TrimSuffix(input, "\n")
+	}
+}
+
+// addNewField reads standard input from the user, prints instructions,
+// and ensures that the input is cleaned prior to saving it to the DB.
+func addNewField(reader *bufio.Reader, prompt string) string {
+	fmt.Print(prompt)
+	input, _ := reader.ReadString('\n')
+	if input != "\n" {
+		input = strings.TrimSuffix(input, "\n")
+	}
+	return input
 }

@@ -39,46 +39,15 @@ func handleFunc(db *sql.DB, opts []wmenu.Opt) {
 
 	case 0:
 		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("Enter the province name: ")
-		province_name, _ := reader.ReadString('\n')
-		if province_name != "\n" {
-			province_name = strings.TrimSuffix(province_name, "\n")
-		}
-		fmt.Print("Enter the name of the capital city: ")
-		capital, _ := reader.ReadString('\n')
-		if capital != "\n" {
-			capital = strings.TrimSuffix(capital, "\n")
-		}
-		fmt.Print("Enter the region's name: ")
-		region, _ := reader.ReadString('\n')
-		if region != "\n" {
-			region = strings.TrimSuffix(region, "\n")
-		}
-		fmt.Print("Enter the department's name: ")
-		department, _ := reader.ReadString('\n')
-		if department != "\n" {
-			department = strings.TrimSuffix(department, "\n")
-		}
-		fmt.Print("Enter the region's name: ")
-		area_km2, _ := reader.ReadString('\n')
-		if area_km2 != "\n" {
-			area_km2 = strings.TrimSuffix(area_km2, "\n")
-		}
-		fmt.Print("Enter province's population: ")
-		population_2021, _ := reader.ReadString('\n')
-		if population_2021 != "\n" {
-			population_2021 = strings.TrimSuffix(population_2021, "\n")
-		}
-		fmt.Print("Enter the province's density: ")
-		density, _ := reader.ReadString('\n')
-		if density != "\n" {
-			density = strings.TrimSuffix(density, "\n")
-		}
-		fmt.Print("Enter the year in which this province was established: ")
-		established_year, _ := reader.ReadString('\n')
-		if established_year != "\n" {
-			established_year = strings.TrimSuffix(established_year, "\n")
-		}
+
+		province_name := addNewField(reader, "Enter the province name: ")
+		capital := addNewField(reader, "Enter the name of the capital city: ")
+		region := addNewField(reader, "Enter the region's name: ")
+		department := addNewField(reader, "Enter the department's name: ")
+		area_km2 := addNewField(reader, "Enter the area's size in km2: ")
+		population_2021 := addNewField(reader, "Enter province's population: ")
+		density := addNewField(reader, "Enter the province's density: ")
+		established_year := addNewField(reader, "Enter the year in which this province was established: ")
 
 		newProvince := province{
 			province:         province_name,
@@ -110,16 +79,33 @@ func handleFunc(db *sql.DB, opts []wmenu.Opt) {
 		break
 
 	case 2:
-		fmt.Println("Update a Province's information")
+
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Enter the id of the Province you wish to update: ")
+		provinceId, _ := reader.ReadString('\n')
+		currentProvince, err := getProvinceById(db, provinceId)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		updateExistingField("Province's Name", currentProvince.province, &currentProvince.province)
+		updateExistingField("Province's Capital", currentProvince.capital, &currentProvince.capital)
+		updateExistingField("Province's Region", currentProvince.region, &currentProvince.region)
+		updateExistingField("Province's Department", currentProvince.department, &currentProvince.department)
+		updateExistingField("Province's Population", currentProvince.population_2021, &currentProvince.population_2021)
+		updateExistingField("Province's Density", currentProvince.density, &currentProvince.density)
+		updateExistingField("Province's Established Year", currentProvince.established_year, &currentProvince.established_year)
+
+		affected := updateProvince(db, currentProvince)
+
+		if affected == 1 {
+			fmt.Println("One Province modified")
+		}
+
+		break
 	case 3:
 		fmt.Println("Deleting a Province by ID")
 	case 4:
 		fmt.Println("Quitting application")
-	}
-}
-
-func checkErr(err error) {
-	if err != nil {
-		log.Fatal(err)
 	}
 }

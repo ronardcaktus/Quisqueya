@@ -14,7 +14,7 @@ import (
 func main() {
 
 	// Connect to database & create DB connection pool.
-	db, err := sql.Open("sqlite3", "./quisqueya.db")
+	db, err := sql.Open("sqlite3", "../../quisqueya.db")
 	checkErr(err)
 	defer db.Close()
 
@@ -75,7 +75,7 @@ func handleFunc(db *sql.DB, opts []wmenu.Opt) {
 		fmt.Printf("Found %v results\n", len(province))
 
 		for _, foundProvince := range province {
-			fmt.Printf("\nID: %d\n------\nProvince: %s\nCapital: %s\nRegion: %s\nDepartment: %s\nArea(km2): %s\nPopulation(2021): %s\nDensity: %s\nDepartment: %s\n", foundProvince.id, foundProvince.province, foundProvince.capital, foundProvince.region, foundProvince.department, foundProvince.area_km2, foundProvince.population_2021, foundProvince.density, foundProvince.established_year)
+			fmt.Printf("\nID: %d\n------\nProvince: %s\nCapital: %s\nRegion: %s\nDepartment: %s\nArea(km2): %s\nPopulation(2021): %s\nDensity: %s\nEstablished Year: %s\n", foundProvince.id, foundProvince.province, foundProvince.capital, foundProvince.region, foundProvince.department, foundProvince.area_km2, foundProvince.population_2021, foundProvince.density, foundProvince.established_year)
 		}
 		break
 

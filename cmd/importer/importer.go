@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -42,13 +43,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("exec failed: %s", err)
 	}
-
+	fmt.Println("DB created or existing DB found.")
 	// Open CSV file
 	f, err := os.Open(csvName)
 	if err != nil {
 		log.Fatalf("open failed: %s", err)
 	}
 	r := csv.NewReader(f)
+	fmt.Println("CSV file opened.")
 	// Read the header row.
 	_, err = r.Read()
 	if err != nil {
@@ -79,4 +81,16 @@ func main() {
 			log.Fatalf("insert failed(%s): %s", province, err)
 		}
 	}
+	fmt.Println("DB populated from CSV file.")
+
+	// Move file up to top-level directory.
+	oldPath := "quisqueya.db"
+	topDirPath := "../../quisqueya.db"
+
+	movingErr := os.Rename(oldPath, topDirPath)
+	if movingErr != nil {
+		fmt.Println("Error moving the file:", movingErr)
+		return
+	}
+	fmt.Println("Database moved to top-level directory.")
 }

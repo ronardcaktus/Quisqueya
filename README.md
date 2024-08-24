@@ -6,8 +6,8 @@ this project as a way to practice and improve my `Go` skills. Currently it is a 
 I will slowly but steadily add new features to the repo, once I decide what those will be 😅.
 
 ## Develop
-Go >= 1.2x
-Sqlite3 >= 3.x
+ - Go >= 1.2x
+ - Sqlite3 >= 3.x
 
 ## Create DB and import data
 
@@ -20,8 +20,8 @@ go build importer.go
 ./importer -csv province_data.csv -db quisqueya.db 
 ```
 
-move that `quisqueya.db` back into the top-level directory.
-
-*Note*: Running this command implies that you are starting a DB from scratch, it should not be run if data already exists. 
+*Notes*: 
+ - The database named `quisqueya.db` will show in the top-level directory.
+ - Running this command implies that you are starting a new database, this command should not be run if data already exists. 
 
 

@@ -92,6 +92,21 @@ func updateProvince(db *sql.DB, targetProvince province) int64 {
 	return affected
 }
 
+func deleteProvince(db *sql.DB, idToDelete string) int64 {
+
+	stmt, err := db.Prepare("DELETE FROM provinces where id = ?")
+	checkErr(err)
+	defer stmt.Close()
+
+	res, err := stmt.Exec(idToDelete)
+	checkErr(err)
+
+	affected, err := res.RowsAffected()
+	checkErr(err)
+
+	return affected
+}
+
 func checkErr(err error) {
 	if err != nil {
 		log.Fatal(err)
@@ -119,19 +134,4 @@ func addNewField(reader *bufio.Reader, prompt string) string {
 		input = strings.TrimSuffix(input, "\n")
 	}
 	return input
-}
-
-func deleteProvince(db *sql.DB, idToDelete string) int64 {
-
-	stmt, err := db.Prepare("DELETE FROM provinces where id = ?")
-	checkErr(err)
-	defer stmt.Close()
-
-	res, err := stmt.Exec(idToDelete)
-	checkErr(err)
-
-	affected, err := res.RowsAffected()
-	checkErr(err)
-
-	return affected
 }
